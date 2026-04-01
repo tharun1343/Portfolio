@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tharun Prasath V K — Full Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── CSS VARIABLES ─────────────────────────────────────────────── */
+:root {
+  --accent: #00D4AA;
+  --accent2: #7C6AF7;
+  --accent-glow: rgba(0,212,170,0.18);
+  --radius: 16px;
+  --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: 'Outfit', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #0A0C10;
+  --bg2: #0F1117;
+  --bg3: #161923;
+  --card: #13161F;
+  --card-border: rgba(255,255,255,0.06);
+  --text: #E8EAF0;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+  --nav-bg: rgba(10,12,16,0.85);
+  --grid-color: rgba(255,255,255,0.025);
+  --shine: rgba(255,255,255,0.03);
+}
+
+[data-theme="light"] {
+  --bg: #F4F6FB;
+  --bg2: #EAEDF5;
+  --bg3: #DFE3F0;
+  --card: #FFFFFF;
+  --card-border: rgba(0,0,0,0.07);
+  --text: #0F1117;
+  --text-muted: #6B7280;
+  --text-dim: #4B5563;
+  --nav-bg: rgba(244,246,251,0.88);
+  --grid-color: rgba(0,0,0,0.035);
+  --shine: rgba(255,255,255,0.6);
+}
+
+/* ─── RESET & BASE ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { max-width: 100%; }
+section { position: relative; overflow: hidden; }
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; }
+
+/* ─── GRID BACKGROUND ────────────────────────────────────────────── */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ─── CURSOR GLOW ────────────────────────────────────────────────── */
+.cursor-glow {
+  position: fixed; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,212,170,0.08) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none; z-index: 1;
+  transform: translate(-50%,-50%);
+  transition: opacity 0.3s;
+}
+
+/* ─── NAVBAR ──────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  backdrop-filter: blur(20px);
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--card-border);
+  transition: all var(--transition);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 64px;
+}
+.nav-logo {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 8px; align-items: center; }
+.nav-links a {
+  font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400;
+  color: var(--text-muted); padding: 6px 14px; border-radius: 8px;
+  transition: all 0.2s; letter-spacing: 0.03em;
+  position: relative;
+}
+.nav-links a:hover { color: var(--text); background: var(--card); }
+.nav-links a.active { color: var(--accent); }
+.nav-actions { display: flex; gap: 8px; align-items: center; }
+
+/* Theme Toggle */
+.theme-toggle {
+  width: 44px; height: 24px; background: var(--bg3); border-radius: 99px;
+  border: 1px solid var(--card-border); cursor: pointer; position: relative;
+  transition: background 0.3s; flex-shrink: 0;
+}
+.theme-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); transition: transform 0.3s;
+}
+[data-theme="light"] .theme-toggle::after { transform: translateX(20px); }
+
+/* Mobile Menu */
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.hamburger span { width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+
+/* ─── HERO ────────────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 32px 80px;
+  position: relative; z-index: 2;
+}
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 420px; gap: 80px; align-items: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 99px; padding: 6px 16px; margin-bottom: 28px;
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  animation: fadeSlideUp 0.6s ease both;
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+
+.hero-name {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(2.8rem, 5.5vw, 4.5rem); line-height: 1.05;
+  letter-spacing: -0.03em; margin-bottom: 12px;
+  animation: fadeSlideUp 0.7s ease 0.1s both;
+}
+.hero-name .accent { color: var(--accent); }
+.hero-title {
+  font-family: var(--font-mono); font-size: 1rem; color: var(--text-muted);
+  margin-bottom: 24px; letter-spacing: 0.02em;
+  animation: fadeSlideUp 0.7s ease 0.2s both;
+}
+.hero-tagline {
+  font-size: 1.2rem; color: var(--text-dim); max-width: 520px;
+  line-height: 1.7; margin-bottom: 40px;
+  animation: fadeSlideUp 0.7s ease 0.3s both;
+}
+.hero-tagline strong { color: var(--text); font-weight: 600; }
+.hero-cta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  animation: fadeSlideUp 0.7s ease 0.4s both;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #0A0C10;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+  padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer;
+  transition: all 0.25s; letter-spacing: 0.01em;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,212,170,0.3); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--text);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.9rem;
+  padding: 13px 28px; border-radius: 12px; border: 1px solid var(--card-border);
+  cursor: pointer; transition: all 0.25s;
+}
+.btn-secondary:hover { background: var(--card); border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+/* Hero Stats */
+.hero-stats {
+  display: flex; gap: 32px; margin-top: 48px;
+  animation: fadeSlideUp 0.7s ease 0.5s both;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: var(--font-display); font-weight: 800; font-size: 2rem;
+  color: var(--accent); line-height: 1;
+}
+.stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-family: var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* Hero Visual */
+.hero-visual {
+  animation: fadeSlideUp 0.8s ease 0.3s both;
+  position: relative;
+}
+.code-window {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+}
+.code-header {
+  background: var(--bg3); padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--card-border);
+}
+.code-dot { width: 10px; height: 10px; border-radius: 50%; }
+.code-dot.red { background: #FF5F57; }
+.code-dot.yellow { background: #FEBC2E; }
+.code-dot.green { background: #28C840; }
+.code-filename { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-left: 8px; }
+.code-body { padding: 20px 24px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8; }
+.code-line { display: flex; gap: 16px; }
+.ln { color: var(--text-muted); opacity: 0.4; min-width: 20px; text-align: right; user-select: none; }
+.kw { color: #7C6AF7; }
+.cls { color: #F7B955; }
+.fn { color: #00D4AA; }
+.str { color: #F87171; }
+.cm { color: var(--text-muted); font-style: italic; }
+.prop { color: #60A5FA; }
+
+/* Floating tech pills */
+.tech-pills {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
+}
+.tech-pill {
+  background: var(--bg3); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 6px 12px;
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);
+  transition: all 0.2s;
+}
+.tech-pill:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+/* ─── SECTION COMMONS ─────────────────────────────────────────────── */
+.section-wrap { max-width: 1200px; margin: 0 auto; padding: 100px 32px; position: relative; z-index: 2; }
+.section-label {
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+.section-title {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.1;
+}
+.section-sub { color: var(--text-dim); max-width: 560px; line-height: 1.7; margin-bottom: 60px; }
+.divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--card-border), transparent);
+}
+
+/* ─── ABOUT ───────────────────────────────────────────────────────── */
+#about { background: var(--bg2); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.about-text p { color: var(--text-dim); line-height: 1.85; margin-bottom: 20px; font-size: 1.02rem; }
+.about-text p strong { color: var(--text); font-weight: 600; }
+.education-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+.edu-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+  transition: all var(--transition); cursor: default;
+}
+.edu-card:hover { border-color: var(--accent); transform: translateX(4px); }
+.edu-icon {
+  width: 40px; height: 40px; border-radius: 10px; background: var(--accent-glow);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem;
+}
+.edu-info h4 { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.edu-info p { font-size: 0.82rem; color: var(--text-muted); }
+.edu-info .yr { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); margin-top: 4px; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 1px; background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+}
+.tl-item { position: relative; margin-bottom: 32px; }
+.tl-dot {
+  position: absolute; left: -24px; top: 4px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg2);
+  box-shadow: 0 0 8px var(--accent);
+}
+.tl-dot.dim { background: var(--text-muted); box-shadow: none; }
+.tl-year { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+.tl-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.tl-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+.tl-desc { font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; }
+
+/* ─── SKILLS ──────────────────────────────────────────────────────── */
+#skills { background: var(--bg); }
+.skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.skill-category {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 28px; transition: all var(--transition);
+}
+.skill-category:hover { border-color: var(--accent); box-shadow: 0 8px 32px var(--accent-glow); }
+.cat-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.cat-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.cat-icon.fe { background: rgba(124,106,247,0.15); }
+.cat-icon.be { background: rgba(0,212,170,0.15); }
+.cat-icon.db { background: rgba(248,185,85,0.15); }
+.cat-icon.cl { background: rgba(96,165,250,0.15); }
+.cat-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-tag {
+  background: var(--bg2); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 6px 14px;
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);
+  transition: all 0.2s;
+}
+.skill-tag:hover { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+.skill-tag.primary { border-color: rgba(0,212,170,0.3); color: var(--accent); background: var(--accent-glow); }
+
+/* ─── EXPERIENCE ──────────────────────────────────────────────────── */
+#experience { background: var(--bg2); }
+.exp-tabs { display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; }
+.exp-tab {
+  font-family: var(--font-mono); font-size: 0.78rem; padding: 8px 20px;
+  border-radius: 8px; border: 1px solid var(--card-border);
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  transition: all 0.2s; letter-spacing: 0.04em;
+}
+.exp-tab.active { background: var(--accent); color: #0A0C10; border-color: var(--accent); font-weight: 700; }
+.exp-panel { display: none; }
+.exp-panel.active { display: block; animation: fadeIn 0.35s ease; }
+.exp-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 36px; position: relative; overflow: hidden;
+}
+.exp-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2));
+}
+.exp-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 12px; }
+.exp-role { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; letter-spacing: -0.01em; }
+.exp-badge {
+  background: var(--accent-glow); border: 1px solid rgba(0,212,170,0.3);
+  color: var(--accent); border-radius: 99px; padding: 4px 14px;
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500;
+}
+.exp-company { font-size: 1rem; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+.exp-meta { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 24px; }
+.exp-highlights { display: flex; flex-direction: column; gap: 12px; }
+.exp-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px; background: var(--bg3); border-radius: 10px;
+}
+.exp-item-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 6px; flex-shrink: 0; }
+.exp-item-text { font-size: 0.92rem; color: var(--text-dim); line-height: 1.65; }
+.exp-item-text strong { color: var(--text); font-weight: 600; }
+.exp-tech { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.exp-tech-tag {
+  background: var(--bg3); border: 1px solid var(--card-border);
+  border-radius: 6px; padding: 4px 12px;
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);
+}
+
+/* ─── PROJECTS ────────────────────────────────────────────────────── */
+#projects { background: var(--bg); }
+.projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.project-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 28px; position: relative; overflow: hidden;
+  transition: all var(--transition); cursor: default;
+  display: flex; flex-direction: column;
+}
+.project-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.project-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--shine) 0%, transparent 60%);
+  pointer-events: none; opacity: 0; transition: opacity 0.3s;
+}
+.project-card:hover::after { opacity: 1; }
+.proj-tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.7rem;
+  padding: 3px 10px; border-radius: 6px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.proj-tag.enterprise { background: rgba(0,212,170,0.12); color: var(--accent); border: 1px solid rgba(0,212,170,0.2); }
+.proj-tag.webapp { background: rgba(124,106,247,0.12); color: #a899ff; border: 1px solid rgba(124,106,247,0.2); }
+.proj-tag.migration { background: rgba(248,185,85,0.12); color: #f7b955; border: 1px solid rgba(248,185,85,0.2); }
+.proj-tag.tool { background: rgba(96,165,250,0.12); color: #93c5fd; border: 1px solid rgba(96,165,250,0.2); }
+.proj-title { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; }
+.proj-desc { font-size: 0.87rem; color: var(--text-dim); line-height: 1.7; flex: 1; margin-bottom: 20px; }
+.proj-stack { display: flex; flex-wrap: wrap; gap: 6px; }
+.proj-stack span {
+  background: var(--bg2); border-radius: 5px; padding: 3px 9px;
+  font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);
+}
+
+/* ─── ACHIEVEMENTS ────────────────────────────────────────────────── */
+#achievements { background: var(--bg2); }
+.achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.achievement-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 28px; text-align: center;
+  transition: all var(--transition);
+}
+.achievement-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 12px 40px var(--accent-glow); }
+.ach-icon { font-size: 2.2rem; margin-bottom: 16px; }
+.ach-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+.ach-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ─── CONTACT ─────────────────────────────────────────────────────── */
+#contact { background: var(--bg); }
+.contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: start; }
+.contact-text h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; margin-bottom: 16px; letter-spacing: -0.02em; }
+.contact-text p { color: var(--text-dim); line-height: 1.8; margin-bottom: 32px; }
+.contact-links { display: flex; flex-direction: column; gap: 14px; }
+.contact-link {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 12px; padding: 16px 20px; transition: all var(--transition);
+}
+.contact-link:hover { border-color: var(--accent); transform: translateX(4px); background: var(--bg2); }
+.contact-link-icon {
+  width: 40px; height: 40px; border-radius: 10px; background: var(--accent-glow);
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+}
+.contact-link-info { flex: 1; }
+.contact-link-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.contact-link-value { font-weight: 600; font-size: 0.9rem; margin-top: 2px; }
+.contact-form {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 32px;
+}
+.contact-form h4 { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.form-group input, .form-group textarea {
+  width: 100%; background: var(--bg2); border: 1px solid var(--card-border);
+  border-radius: 10px; padding: 12px 16px; color: var(--text); font-family: var(--font-body); font-size: 0.9rem;
+  outline: none; resize: none; transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { height: 100px; }
+
+/* ─── FOOTER ──────────────────────────────────────────────────────── */
+footer {
+  background: var(--bg2); border-top: 1px solid var(--card-border);
+  padding: 32px; text-align: center; position: relative; z-index: 2;
+}
+footer p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+footer p span { color: var(--accent); }
+
+/* ─── SCROLL REVEAL ───────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1), transform 0.65s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── ANIMATIONS ──────────────────────────────────────────────────── */
+@keyframes fadeSlideUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes typing { from { width: 0; } to { width: 100%; } }
+
+/* Typewriter */
+.typewriter {
+  overflow: hidden; white-space: nowrap;
+  border-right: 2px solid var(--accent);
+  animation: typing 2.5s steps(30,end) 0.5s both, blink 0.7s step-end infinite 3s;
+  display: inline-block; max-width: 100%;
+}
+@keyframes blink { 0%,100% { border-color: var(--accent); } 50% { border-color: transparent; } }
+
+/* Progress bars */
+.skill-bar-wrap { margin-top: 20px; }
+.skill-bar-item { margin-bottom: 12px; }
+.skill-bar-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); margin-bottom: 5px; }
+.skill-bar-track { height: 4px; background: var(--bg3); border-radius: 99px; overflow: hidden; }
+.skill-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transform-origin: left; transform: scaleX(0); transition: transform 1.2s cubic-bezier(0.4,0,0.2,1); }
+.skill-bar-fill.animate { transform: scaleX(1); }
+
+/* ─── BACK TO TOP ─────────────────────────────────────────────────── */
+.back-top {
+  position: fixed; bottom: 32px; right: 32px; z-index: 100;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--accent); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: #0A0C10; transition: all 0.2s;
+  opacity: 0; pointer-events: none; transform: translateY(8px);
+  box-shadow: 0 4px 20px rgba(0,212,170,0.3);
+}
+.back-top.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
+.back-top:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,212,170,0.4); }
+
+/* ─── MOBILE NAV ──────────────────────────────────────────────────── */
+.mobile-menu {
+  display: none; position: fixed; top: 64px; left: 0; right: 0;
+  background: var(--nav-bg); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border); padding: 16px 32px 24px;
+  flex-direction: column; gap: 4px; z-index: 99;
+}
+.mobile-menu a { padding: 10px 12px; border-radius: 8px; color: var(--text-dim); font-family: var(--font-mono); font-size: 0.88rem; transition: all 0.2s; }
+.mobile-menu a:hover { color: var(--accent); background: var(--card); }
+.mobile-menu.open { display: flex; }
+
+/* ─── RESPONSIVE ──────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { display: none; }
+  .about-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr 1fr; }
+  .projects-grid { grid-template-columns: 1fr 1fr; }
+  .achievements-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .section-wrap { padding: 70px 20px; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  #hero { padding: 100px 20px 60px; }
+  .hero-stats { gap: 20px; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .achievements-grid { grid-template-columns: 1fr; }
+  .exp-top { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- Grid BG -->
+<div class="grid-bg"></div>
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ─── NAVBAR ───────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">TP<span>.</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#achievements">Achievements</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="theme-toggle" id="themeToggle" title="Toggle theme"></div>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#skills" onclick="closeMobile()">Skills</a>
+  <a href="#experience" onclick="closeMobile()">Experience</a>
+  <a href="#projects" onclick="closeMobile()">Projects</a>
+  <a href="#achievements" onclick="closeMobile()">Achievements</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- ─── HERO ──────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Available for new opportunities
+      </div>
+      <h1 class="hero-name">Tharun<br>Prasath <span class="accent">V K</span></h1>
+      <p class="hero-title">// Full Stack Developer · .NET &amp; Angular Specialist</p>
+      <p class="hero-tagline">
+        Building <strong>scalable, enterprise-grade</strong> applications at the intersection of robust backend architecture and clean, responsive frontends. Specialized in <strong>.NET Core &amp; AngularJS</strong> with hands-on cloud deployment experience.
+      </p>
+      <div class="hero-cta">
+        <a href="#experience" class="btn-primary">View My Work ↓</a>
+        <a href="#contact" class="btn-secondary">Get In Touch</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">2+</div>
+          <div class="stat-label">Years Exp</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">10+</div>
+          <div class="stat-label">Apps Worked</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">RCM</div>
+          <div class="stat-label">Domain</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Azure</div>
+          <div class="stat-label">Cloud</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="code-window" style="animation: float 5s ease-in-out infinite;">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-filename">Developer.cs</span>
+        </div>
+        <div class="code-body">
+          <div class="code-line"><span class="ln">1</span><span class="kw">public class</span> <span class="cls">TharunPrasath</span></div>
+          <div class="code-line"><span class="ln">2</span><span>&nbsp;: IFullStackDeveloper</span></div>
+          <div class="code-line"><span class="ln">3</span><span>{</span></div>
+          <div class="code-line"><span class="ln">4</span><span>&nbsp;&nbsp;</span><span class="prop">string</span> Name <span>= </span><span class="str">"Tharun Prasath VK"</span>;</div>
+          <div class="code-line"><span class="ln">5</span><span>&nbsp;&nbsp;</span><span class="prop">string</span> Location <span>= </span><span class="str">"India 🇮🇳"</span>;</div>
+          <div class="code-line"><span class="ln">6</span><span></span></div>
+          <div class="code-line"><span class="ln">7</span><span>&nbsp;&nbsp;</span><span class="prop">string[]</span> Stack <span>= {</span></div>
+          <div class="code-line"><span class="ln">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">"ASP.NET Core"</span><span>,</span></div>
+          <div class="code-line"><span class="ln">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">"AngularJS"</span><span>,</span></div>
+          <div class="code-line"><span class="ln">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">"Azure"</span><span>,</span></div>
+          <div class="code-line"><span class="ln">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="str">"SQL Server"</span></div>
+          <div class="code-line"><span class="ln">12</span><span>&nbsp;&nbsp;};</span></div>
+          <div class="code-line"><span class="ln">13</span><span></span></div>
+          <div class="code-line"><span class="ln">14</span><span>&nbsp;&nbsp;</span><span class="cm">// Always shipping clean code ✨</span></div>
+          <div class="code-line"><span class="ln">15</span><span>}</span></div>
+        </div>
+      </div>
+      <div class="tech-pills">
+        <span class="tech-pill">.NET 8</span>
+        <span class="tech-pill">ASP.NET Core</span>
+        <span class="tech-pill">AngularJS</span>
+        <span class="tech-pill">Azure</span>
+        <span class="tech-pill">SQL Server</span>
+        <span class="tech-pill">Web API</span>
+        <span class="tech-pill">Django</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─────────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="section-label">About Me</div>
+    <h2 class="section-title reveal">The Developer Behind the Code</h2>
+    <div class="about-grid">
+      <div class="about-text reveal reveal-delay-1">
+        <p>
+          I'm a <strong>Full Stack Developer based in India</strong> with a passion for building efficient, scalable software. My journey spans the full stack — from designing RESTful APIs and architecting database schemas to crafting responsive, user-friendly frontends.
+        </p>
+        <p>
+          My professional experience is rooted in the <strong>healthcare technology sector</strong>, specifically Revenue Cycle Management (RCM), where I've contributed to enterprise applications that streamline billing workflows and optimize operational efficiency.
+        </p>
+        <p>
+          I took a <strong>deliberate career break in 2024</strong> to invest in deepening my technical foundation — exploring cloud-native architectures, modern .NET paradigms, and full stack development best practices. This period of focused upskilling directly fueled my contributions at my current role, where I've led complex application migrations and cloud deployments from day one.
+        </p>
+        <p>
+          I believe in writing code that others can understand, maintain, and build upon — and I bring the same structured mindset to problem-solving as I do to every PR.
+        </p>
+        <div class="education-cards">
+          <div class="edu-card">
+            <div class="edu-icon">🎓</div>
+            <div class="edu-info">
+              <h4>Master of Computer Applications (MCA)</h4>
+              <p>Post-graduate specialization in advanced computing</p>
+              <div class="yr">2022 – 2024</div>
+            </div>
+          </div>
+          <div class="edu-card">
+            <div class="edu-icon">📘</div>
+            <div class="edu-info">
+              <h4>B.Sc. Computer Science</h4>
+              <p>Bachelor's with strong foundation in CS fundamentals</p>
+              <div class="yr">2019 – 2022</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Apr 2025 – Present</div>
+            <div class="tl-title">Full Stack Developer</div>
+            <div class="tl-sub">Health One Cloud Pvt. Ltd.</div>
+            <div class="tl-desc">Leading enterprise healthcare application development and cloud migration in the RCM domain using ASP.NET Core, AngularJS, and Azure.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot dim"></div>
+            <div class="tl-year">Feb 2024 – Early 2025</div>
+            <div class="tl-title">Career Break (Intentional Upskilling)</div>
+            <div class="tl-sub">Self-directed Learning</div>
+            <div class="tl-desc">Focused on deepening .NET Core, cloud architecture, and full stack development skills. Explored Azure services, API design, and modern deployment patterns.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--accent2)"></div>
+            <div class="tl-year">2022 – Feb 2024</div>
+            <div class="tl-title">Full Stack Software Engineer Intern</div>
+            <div class="tl-sub">GoZoBee Pvt. Ltd.</div>
+            <div class="tl-desc">Python Django backend development with HTML/CSS/JS frontends. Gained early exposure to ASP.NET and Microsoft technology stack.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot dim"></div>
+            <div class="tl-year">2019 – 2022</div>
+            <div class="tl-title">B.Sc. Computer Science</div>
+            <div class="tl-sub">Academic Foundation</div>
+            <div class="tl-desc">Built strong CS fundamentals in algorithms, databases, software engineering, and web technologies.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SKILLS ────────────────────────────────────────────────────── -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="section-label">Technical Skills</div>
+    <h2 class="section-title reveal">What I Work With</h2>
+    <p class="section-sub reveal reveal-delay-1">A curated stack built through real-world enterprise projects, covering the full development lifecycle from API design to cloud deployment.</p>
+
+    <div class="skills-grid">
+      <div class="skill-category reveal reveal-delay-1">
+        <div class="cat-header">
+          <div class="cat-icon fe">🎨</div>
+          <div class="cat-title">Frontend</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag primary">AngularJS</span>
+          <span class="skill-tag primary">HTML5</span>
+          <span class="skill-tag primary">CSS3</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">Bootstrap</span>
+          <span class="skill-tag">Responsive Design</span>
+          <span class="skill-tag">Razor Views</span>
+          <span class="skill-tag">Figma</span>
+        </div>
+      </div>
+
+      <div class="skill-category reveal reveal-delay-2">
+        <div class="cat-header">
+          <div class="cat-icon be">⚙️</div>
+          <div class="cat-title">Backend</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag primary">ASP.NET Core</span>
+          <span class="skill-tag primary">Web API</span>
+          <span class="skill-tag primary">ASP.NET Framework</span>
+          <span class="skill-tag">.NET 8</span>
+          <span class="skill-tag">Django</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">REST APIs</span>
+          <span class="skill-tag">Swagger / OpenAPI</span>
+          <span class="skill-tag">Entity Framework</span>
+          <span class="skill-tag">Django ORM</span>
+        </div>
+      </div>
+
+      <div class="skill-category reveal reveal-delay-3">
+        <div class="cat-header">
+          <div class="cat-icon db">🗄️</div>
+          <div class="cat-title">Database</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag primary">SQL Server</span>
+          <span class="skill-tag primary">Stored Procedures</span>
+          <span class="skill-tag">T-SQL</span>
+          <span class="skill-tag">Database Design</span>
+          <span class="skill-tag">Azure Blob Storage</span>
+          <span class="skill-tag">Query Optimization</span>
+        </div>
+      </div>
+
+      <div class="skill-category reveal reveal-delay-4">
+        <div class="cat-header">
+          <div class="cat-icon cl">☁️</div>
+          <div class="cat-title">Cloud &amp; Tools</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag primary">Azure Container Apps</span>
+          <span class="skill-tag primary">Azure Blob Storage</span>
+          <span class="skill-tag">Docker (basics)</span>
+          <span class="skill-tag">IIS</span>
+          <span class="skill-tag">Linux Hosting</span>
+          <span class="skill-tag">Git / GitHub</span>
+          <span class="skill-tag">Visual Studio</span>
+          <span class="skill-tag">Postman</span>
+          <span class="skill-tag">Figma</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Proficiency Bars -->
+    <div style="margin-top:48px;" class="reveal">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:1rem;margin-bottom:20px;">Core Proficiency</div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span>ASP.NET Core / Web API</span><span>88%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span>AngularJS &amp; JavaScript</span><span>80%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span>SQL Server &amp; T-SQL</span><span>82%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:82%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span>Python &amp; Django</span><span>75%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:75%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span>Azure Cloud Services</span><span>70%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:70%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── EXPERIENCE ────────────────────────────────────────────────── -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="section-label">Work Experience</div>
+    <h2 class="section-title reveal">Where I've Made Impact</h2>
+
+    <div class="exp-tabs reveal">
+      <button class="exp-tab active" onclick="switchTab(0)">Health One Cloud</button>
+      <button class="exp-tab" onclick="switchTab(1)">GoZoBee</button>
+    </div>
+
+    <!-- Tab 0: Health One Cloud -->
+    <div class="exp-panel active" id="tab-0">
+      <div class="exp-card reveal">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">Full Stack Developer</div>
+            <div class="exp-company">Health One Cloud Private Limited</div>
+            <div class="exp-meta">📍 India &nbsp;·&nbsp; 🗓 April 2025 – Present &nbsp;·&nbsp; Full-time</div>
+          </div>
+          <span class="exp-badge">Current Role</span>
+        </div>
+        <div class="exp-highlights">
+          <div class="exp-item">
+            <div class="exp-item-dot"></div>
+            <div class="exp-item-text">
+              <strong>Led end-to-end migration</strong> of multiple enterprise healthcare applications from legacy .NET Framework 4.x to .NET 8 / ASP.NET Core, improving performance, maintainability, and enabling cloud-native deployment for the Revenue Cycle Management (RCM) platform.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot"></div>
+            <div class="exp-item-text">
+              <strong>Deployed and configured applications on Azure Container Apps</strong> (Linux-based), handling environment variables, blob storage integration, port configuration, and resolving Windows IIS vs. Linux hosting discrepancies.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot"></div>
+            <div class="exp-item-text">
+              <strong>Architected and developed RESTful Web APIs</strong> with Swagger/OpenAPI documentation, centralized error handling, and secure API integration patterns across multiple billing and payor management services.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot"></div>
+            <div class="exp-item-text">
+              <strong>Built and optimized AngularJS frontends</strong>, including resolving Bootstrap/jQuery version compatibility issues, fixing CSS layout migrations from Windows IIS to Linux, and implementing smooth UI state management with <code>$q</code> service and async patterns.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot"></div>
+            <div class="exp-item-text">
+              <strong>Authored complex stored procedures</strong> in SQL Server for billing workflows including claim processing, payor policy management, and biller dashboard aggregations.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot"></div>
+            <div class="exp-item-text">
+              <strong>Collaborated actively with Azure Admin and DevOps</strong> on environment configuration, container secrets, DNS/certificate management, and troubleshooting 404/500 deployment issues on live environments.
+            </div>
+          </div>
+        </div>
+        <div class="exp-tech">
+          <span class="exp-tech-tag">ASP.NET Core</span>
+          <span class="exp-tech-tag">.NET 8</span>
+          <span class="exp-tech-tag">AngularJS</span>
+          <span class="exp-tech-tag">Web API</span>
+          <span class="exp-tech-tag">SQL Server</span>
+          <span class="exp-tech-tag">Azure Container Apps</span>
+          <span class="exp-tech-tag">Azure Blob Storage</span>
+          <span class="exp-tech-tag">Swagger</span>
+          <span class="exp-tech-tag">C#</span>
+          <span class="exp-tech-tag">Entity Framework</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 1: GoZoBee -->
+    <div class="exp-panel" id="tab-1">
+      <div class="exp-card reveal">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">Full Stack Software Engineer Intern</div>
+            <div class="exp-company">GoZoBee Private Limited</div>
+            <div class="exp-meta">📍 India &nbsp;·&nbsp; 🗓 2022 – February 2024 &nbsp;·&nbsp; Internship</div>
+          </div>
+          <span class="exp-badge" style="background:rgba(124,106,247,0.15);border-color:rgba(124,106,247,0.3);color:#a899ff;">Internship</span>
+        </div>
+        <div class="exp-highlights">
+          <div class="exp-item">
+            <div class="exp-item-dot" style="background:var(--accent2)"></div>
+            <div class="exp-item-text">
+              <strong>Developed full-featured backend applications</strong> using Python and Django, implementing Django ORM for database operations, building model-view-template (MVT) architectures, and integrating third-party APIs.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot" style="background:var(--accent2)"></div>
+            <div class="exp-item-text">
+              <strong>Built responsive frontend interfaces</strong> using HTML5, CSS3, and JavaScript, collaborating on UI workflows that emphasized clean, accessible design and positive user experience.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot" style="background:var(--accent2)"></div>
+            <div class="exp-item-text">
+              <strong>Gained foundational exposure to ASP.NET</strong> and Microsoft technology stack, beginning a transition into enterprise .NET development that would define the next phase of my career.
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-item-dot" style="background:var(--accent2)"></div>
+            <div class="exp-item-text">
+              <strong>Participated in end-to-end feature delivery</strong> — from requirement understanding and database schema design to coding, testing, and deployment in a fast-paced startup environment.
+            </div>
+          </div>
+        </div>
+        <div class="exp-tech">
+          <span class="exp-tech-tag">Python</span>
+          <span class="exp-tech-tag">Django</span>
+          <span class="exp-tech-tag">Django ORM</span>
+          <span class="exp-tech-tag">HTML5</span>
+          <span class="exp-tech-tag">CSS3</span>
+          <span class="exp-tech-tag">JavaScript</span>
+          <span class="exp-tech-tag">ASP.NET</span>
+          <span class="exp-tech-tag">MySQL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROJECTS ──────────────────────────────────────────────────── -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="section-label">Projects</div>
+    <h2 class="section-title reveal">Things I've Built</h2>
+    <p class="section-sub reveal reveal-delay-1">Enterprise applications, tools, and personal projects — each solving a real problem.</p>
+
+    <div class="projects-grid">
+      <div class="project-card reveal reveal-delay-1">
+        <span class="proj-tag enterprise">Enterprise</span>
+        <div class="proj-title">RCM Billing Suite</div>
+        <div class="proj-desc">
+          Comprehensive Revenue Cycle Management platform covering payor policy management, biller dashboard, claims processing, and date management. Built with ASP.NET Core Web APIs and AngularJS frontend, serving healthcare billing operations at scale.
+        </div>
+        <div class="proj-stack">
+          <span>ASP.NET Core</span><span>AngularJS</span><span>SQL Server</span><span>Web API</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-2">
+        <span class="proj-tag migration">Migration</span>
+        <div class="proj-title">.NET Framework → .NET 8 Migration</div>
+        <div class="proj-desc">
+          End-to-end migration of legacy ASP.NET WebForms/MVC applications to modern .NET 8 on Linux-based Azure Container Apps. Included API modernization, dependency injection refactoring, CSS layout fixes, and environment-specific configuration management.
+        </div>
+        <div class="proj-stack">
+          <span>.NET 8</span><span>ASP.NET Core</span><span>Azure</span><span>Linux</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-3">
+        <span class="proj-tag enterprise">Enterprise</span>
+        <div class="proj-title">Payor Policy & Link Management</div>
+        <div class="proj-desc">
+          Complex payor-policy linking module for healthcare billing, involving multi-service API integration, blob storage for document handling, Swagger-documented endpoints, and multi-environment deployment across staging and production Azure Container Apps.
+        </div>
+        <div class="proj-stack">
+          <span>ASP.NET Core</span><span>Azure Blob</span><span>Swagger</span><span>AngularJS</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-1">
+        <span class="proj-tag webapp">Web App</span>
+        <div class="proj-title">Quiz Application</div>
+        <div class="proj-desc">
+          Interactive quiz platform with dynamic question loading, real-time scoring, timer management, and result analysis. Built with a clean, accessible UI and RESTful backend supporting multiple quiz categories and difficulty levels.
+        </div>
+        <div class="proj-stack">
+          <span>Django</span><span>Python</span><span>JavaScript</span><span>HTML/CSS</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-2">
+        <span class="proj-tag webapp">Web App</span>
+        <div class="proj-title">Full Stack CRUD Application</div>
+        <div class="proj-desc">
+          Feature-complete CRUD web application with authentication, role-based access control, data validation, and audit logging. Demonstrates clean architecture patterns with separated API and frontend layers.
+        </div>
+        <div class="proj-stack">
+          <span>ASP.NET Core</span><span>AngularJS</span><span>SQL Server</span><span>Bootstrap</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-3">
+        <span class="proj-tag tool">Tool</span>
+        <div class="proj-title">Biller Dashboard & Analytics</div>
+        <div class="proj-desc">
+          Operational dashboard for healthcare billing teams featuring claim status tracking, billing metrics, daily/monthly performance summaries, and drill-down views. Powered by complex T-SQL stored procedures for aggregated reporting.
+        </div>
+        <div class="proj-stack">
+          <span>T-SQL</span><span>Stored Procs</span><span>AngularJS</span><span>Web API</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ACHIEVEMENTS ──────────────────────────────────────────────── -->
+<section id="achievements">
+  <div class="section-wrap">
+    <div class="section-label">Achievements</div>
+    <h2 class="section-title reveal">Recognition &amp; Milestones</h2>
+
+    <div class="achievements-grid">
+      <div class="achievement-card reveal reveal-delay-1">
+        <div class="ach-icon">🥇</div>
+        <div class="ach-title">1st Place — UI/UX Design Workshop</div>
+        <div class="ach-desc">Won first place in a UI/UX design competition using Figma, demonstrating strong design thinking, wireframing, and prototyping skills alongside technical expertise.</div>
+      </div>
+
+      <div class="achievement-card reveal reveal-delay-2">
+        <div class="ach-icon">🚀</div>
+        <div class="ach-title">Enterprise Cloud Migration Lead</div>
+        <div class="ach-desc">Successfully led the migration of multiple production healthcare applications from on-premise IIS to Azure Container Apps within the first year at Health One Cloud.</div>
+      </div>
+
+      <div class="achievement-card reveal reveal-delay-3">
+        <div class="ach-icon">🎓</div>
+        <div class="ach-title">Dual-Stack Academic Achievement</div>
+        <div class="ach-desc">Completed both B.Sc. Computer Science and MCA while simultaneously building hands-on development experience — establishing a strong technical and academic foundation.</div>
+      </div>
+
+      <div class="achievement-card reveal reveal-delay-1">
+        <div class="ach-icon">⚡</div>
+        <div class="ach-title">Cross-Technology Stack Transition</div>
+        <div class="ach-desc">Successfully transitioned from Python/Django to the Microsoft .NET ecosystem, becoming proficient in ASP.NET Core, C#, and Azure — a testament to rapid technical adaptability.</div>
+      </div>
+
+      <div class="achievement-card reveal reveal-delay-2">
+        <div class="ach-icon">🔧</div>
+        <div class="ach-title">Production Bug Resolution</div>
+        <div class="ach-desc">Diagnosed and resolved critical production environment issues including Azure Container App 404 errors, blob storage configuration failures, and Linux/Windows hosting incompatibilities.</div>
+      </div>
+
+      <div class="achievement-card reveal reveal-delay-3">
+        <div class="ach-icon">📈</div>
+        <div class="ach-title">Healthcare Domain Expertise</div>
+        <div class="ach-desc">Developed deep understanding of the RCM (Revenue Cycle Management) domain in healthcare, enabling effective communication with stakeholders and domain-aligned technical decisions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ───────────────────────────────────────────────────── -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="section-label">Contact</div>
+    <h2 class="section-title reveal">Let's Build Something Together</h2>
+
+    <div class="contact-grid">
+      <div class="reveal reveal-delay-1">
+        <div class="contact-text">
+          <h3>Open to the Right Opportunity</h3>
+          <p>Whether you're looking for a Full Stack Developer who understands enterprise .NET architecture, has real cloud deployment experience, or wants someone who can bridge backend logic with polished frontends — I'd love to connect.</p>
+        </div>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:your.email@example.com">
+            <div class="contact-link-icon">✉️</div>
+            <div class="contact-link-info">
+              <div class="contact-link-label">Email</div>
+              <div class="contact-link-value">your.email@example.com</div>
+            </div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+          <a class="contact-link" href="tel:+91XXXXXXXXXX">
+            <div class="contact-link-icon">📱</div>
+            <div class="contact-link-info">
+              <div class="contact-link-label">Phone</div>
+              <div class="contact-link-value">+91 XXXXX XXXXX</div>
+            </div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+          <a class="contact-link" href="https://linkedin.com/in/your-profile" target="_blank">
+            <div class="contact-link-icon">💼</div>
+            <div class="contact-link-info">
+              <div class="contact-link-label">LinkedIn</div>
+              <div class="contact-link-value">linkedin.com/in/tharunprasath</div>
+            </div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+          <a class="contact-link" href="https://github.com/your-github" target="_blank">
+            <div class="contact-link-icon">🐙</div>
+            <div class="contact-link-info">
+              <div class="contact-link-label">GitHub</div>
+              <div class="contact-link-value">github.com/tharunprasath</div>
+            </div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form reveal reveal-delay-2">
+        <h4>Send a Message</h4>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="john@company.com">
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Tell me about the role or project..."></textarea>
+        </div>
+        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="handleFormSubmit(this)">
+          Send Message →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────── -->
+<footer>
+  <p>Designed &amp; Built by <span>Tharun Prasath V K</span> · India 🇮🇳 · <span>2025</span></p>
+</footer>
+
+<!-- Back to Top -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ─── SCRIPTS ────────────────────────────────────────────────────── -->
+<script>
+// ── Cursor Glow ──────────────────────────────────────────────────
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+// ── Theme Toggle ─────────────────────────────────────────────────
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+let isDark = true;
+
+// Load saved theme
+const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+html.setAttribute('data-theme', savedTheme);
+isDark = savedTheme === 'dark';
+
+themeToggle.addEventListener('click', () => {
+  isDark = !isDark;
+  const theme = isDark ? 'dark' : 'light';
+  html.setAttribute('data-theme', theme);
+  localStorage.setItem('portfolio-theme', theme);
+});
+
+// ── Mobile Menu ───────────────────────────────────────────────────
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+  const spans = hamburger.querySelectorAll('span');
+  if (mobileMenu.classList.contains('open')) {
+    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+  } else {
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+});
+function closeMobile() {
+  mobileMenu.classList.remove('open');
+  hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+}
+
+// ── Scroll Reveal ─────────────────────────────────────────────────
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObs.observe(el));
+
+// ── Skill Bars ────────────────────────────────────────────────────
+const barObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-bar-fill').forEach(b => b.classList.add('animate'));
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.skill-bar-wrap').forEach(el => barObs.observe(el));
+
+// ── Active Nav Link ───────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const scrollObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.45 });
+sections.forEach(s => scrollObs.observe(s));
+
+// ── Back to Top ───────────────────────────────────────────────────
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ── Experience Tabs ───────────────────────────────────────────────
+const tabs = document.querySelectorAll('.exp-tab');
+const panels = document.querySelectorAll('.exp-panel');
+function switchTab(idx) {
+  tabs.forEach((t, i) => { t.classList.toggle('active', i === idx); });
+  panels.forEach((p, i) => { p.classList.toggle('active', i === idx); });
+}
+
+// ── Form Submit Mock ──────────────────────────────────────────────
+function handleFormSubmit(btn) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Sending...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    btn.innerHTML = '✅ Message Sent!';
+    btn.style.background = 'var(--accent2)';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.opacity = ''; btn.style.background = ''; }, 3000);
+  }, 1500);
+}
+
+// ── Smooth hover on project cards ────────────────────────────────
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    const rotX = ((y - cy) / cy) * 4;
+    const rotY = ((x - cx) / cx) * -4;
+    card.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+// ── Typed effect on hero title ────────────────────────────────────
+(function() {
+  const titles = [
+    '// Full Stack Developer · .NET & Angular Specialist',
+    '// Cloud-Native App Builder',
+    '// Healthcare Tech Enthusiast',
+    '// ASP.NET Core & AngularJS Dev',
+  ];
+  const el = document.querySelector('.hero-title');
+  if (!el) return;
+  let idx = 0, charIdx = 0, deleting = false;
+  function type() {
+    const current = titles[idx];
+    if (!deleting) {
+      el.textContent = current.slice(0, ++charIdx);
+      if (charIdx === current.length) { deleting = true; setTimeout(type, 2200); return; }
+    } else {
+      el.textContent = current.slice(0, --charIdx);
+      if (charIdx === 0) { deleting = false; idx = (idx + 1) % titles.length; }
+    }
+    setTimeout(type, deleting ? 28 : 58);
+  }
+  setTimeout(type, 1200);
+})();
+</script>
+</body>
+</html>
